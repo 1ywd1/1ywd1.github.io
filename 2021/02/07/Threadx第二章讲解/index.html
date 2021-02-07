@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://1ywd1.github.io">
   <title>Threadx第二章讲解 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1.调度算法 1.1决策模式 1.2先来先服务FCFS 1.3最短进程优先SPN 1.4最短剩余时间优先（SRT）   1.5轮转RR 1.6高响应比优先HRRN 1.7优先权队列">
+  <meta name="description" content="1.调度算法 1.1决策模式 1.2先来先服务FCFS 1.3最短进程优先SPN 1.4最短剩余时间优先（SRT） 1.5轮转RR 1.6高响应比优先HRRN 1.7优先权队列">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Threadx第二章讲解">
 <meta property="og:url" content="http://1ywd1.github.io/2021/02/07/Threadx%E7%AC%AC%E4%BA%8C%E7%AB%A0%E8%AE%B2%E8%A7%A3/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="1.调度算法 1.1决策模式 1.2先来先服务FCFS 1.3最短进程优先SPN 1.4最短剩余时间优先（SRT）   1.5轮转RR 1.6高响应比优先HRRN 1.7优先权队列">
+<meta property="og:description" content="1.调度算法 1.1决策模式 1.2先来先服务FCFS 1.3最短进程优先SPN 1.4最短剩余时间优先（SRT） 1.5轮转RR 1.6高响应比优先HRRN 1.7优先权队列">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://1ywd1.github.io/2021/02/07/Threadx%E7%AC%AC%E4%BA%8C%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E4%BE%8B%E4%BA%8C.png">
 <meta property="og:image" content="http://1ywd1.github.io/2021/02/07/Threadx%E7%AC%AC%E4%BA%8C%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E4%BE%8B3.png">
@@ -23,7 +23,7 @@
 <meta property="og:image" content="http://1ywd1.github.io/2021/02/07/Threadx%E7%AC%AC%E4%BA%8C%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E4%BE%8B7.png">
 <meta property="og:image" content="http://1ywd1.github.io/2021/02/07/Threadx%E7%AC%AC%E4%BA%8C%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E6%97%B6%E9%97%B4%E7%89%87%E8%BD%AE%E8%B0%83%E5%BA%A6%E4%BE%8B1.jpg">
 <meta property="article:published_time" content="2021-02-07T01:44:20.000Z">
-<meta property="article:modified_time" content="2021-02-07T08:52:42.065Z">
+<meta property="article:modified_time" content="2021-02-07T08:54:13.102Z">
 <meta property="article:author" content="影舞道">
 <meta property="article:tag" content="ThreadX">
 <meta property="article:tag" content="教程">
@@ -209,9 +209,7 @@ var _hmt = _hmt || [];
 <li><a href="#12%E5%85%88%E6%9D%A5%E5%85%88%E6%9C%8D%E5%8A%A1fcfs">1.2先来先服务FCFS</a></li>
 <li><a href="#13%E6%9C%80%E7%9F%AD%E8%BF%9B%E7%A8%8B%E4%BC%98%E5%85%88spn">1.3最短进程优先SPN</a></li>
 <li><a href="#14%E6%9C%80%E7%9F%AD%E5%89%A9%E4%BD%99%E6%97%B6%E9%97%B4%E4%BC%98%E5%85%88srt">1.4最短剩余时间优先（SRT）</a></li>
-</ul>
-</li>
-<li><a href="#15%E8%BD%AE%E8%BD%ACrr">1.5轮转RR</a><ul>
+<li><a href="#15%E8%BD%AE%E8%BD%ACrr">1.5轮转RR</a></li>
 <li><a href="#16%E9%AB%98%E5%93%8D%E5%BA%94%E6%AF%94%E4%BC%98%E5%85%88hrrn">1.6高响应比优先HRRN</a></li>
 <li><a href="#17%E4%BC%98%E5%85%88%E6%9D%83%E9%98%9F%E5%88%97">1.7优先权队列</a></li>
 </ul>
@@ -287,7 +285,7 @@ var _hmt = _hmt || [];
 <li> B运行结束，D开始运行。</li>
 </ol>
 <p>以表格的形式展现：<img src="/2021/02/07/Threadx%E7%AC%AC%E4%BA%8C%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E4%BE%8B7.png" alt="例7"></p>
-<h2><span id="15轮转rr">1.5轮转RR</span></h2><p>轮转也称时间片技术（time slicing，SL），对于轮转法，最重要的是时间片的长度。轮转算法以一个周期（q）产生中断，当中断发生时，当前运行的程序置于就绪队列（队尾）中，然后基于FCFS选择下一个就绪作业运行。在这里我们以时间片q=1举例。</p>
+<h3><span id="15轮转rr">1.5轮转RR</span></h3><p>轮转也称时间片技术（time slicing，SL），对于轮转法，最重要的是时间片的长度。轮转算法以一个周期（q）产生中断，当中断发生时，当前运行的程序置于就绪队列（队尾）中，然后基于FCFS选择下一个就绪作业运行。在这里我们以时间片q=1举例。</p>
 <p> 【例】进程A、B、C、D需要运行时间分别为20ms、10ms、15ms、5ms，均在0时刻达。到达的先后次序为A、B、C、D。如果时间片分别为1ms和5ms</p>
 <p>  分析:在掌握了时间片轮调度算法的基础上，我们可以用一个执行时间图来形象的表示进程执行的情况，如下：</p>
 <p><img src="/2021/02/07/Threadx%E7%AC%AC%E4%BA%8C%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E6%97%B6%E9%97%B4%E7%89%87%E8%BD%AE%E8%B0%83%E5%BA%A6%E4%BE%8B1.jpg" alt="时间片轮调度例1"></p>
@@ -501,7 +499,7 @@ var _hmt = _hmt || [];
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">1.调度算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.</span> <span class="toc-text">1.1决策模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.</span> <span class="toc-text">1.2先来先服务FCFS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.</span> <span class="toc-text">1.3最短进程优先SPN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.</span> <span class="toc-text">1.4最短剩余时间优先（SRT）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">2.</span> <span class="toc-text">1.5轮转RR</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">2.1.</span> <span class="toc-text">1.6高响应比优先HRRN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">2.2.</span> <span class="toc-text">1.7优先权队列</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">1.调度算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.</span> <span class="toc-text">1.1决策模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.</span> <span class="toc-text">1.2先来先服务FCFS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.</span> <span class="toc-text">1.3最短进程优先SPN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.</span> <span class="toc-text">1.4最短剩余时间优先（SRT）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.5.</span> <span class="toc-text">1.5轮转RR</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.6.</span> <span class="toc-text">1.6高响应比优先HRRN</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.7.</span> <span class="toc-text">1.7优先权队列</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
