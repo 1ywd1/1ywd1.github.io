@@ -9,17 +9,23 @@
   <link rel="dns-prefetch" href="http://1ywd1.github.io">
   <title>Threadx第三章 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
+  <meta name="description" content="Threadx简介 1.0Threadx的独特功能 1.1picokernel™架构 1.2ANSI C源代码 1.3先进的技术 1.4不是黑匣子   2.0安全认证 2.1TÜV认证 2.2符合MISRA C 2.3UL认证 2.4认证包   3.0嵌入式应用 3.1实时软件 3.2多任务 3.3任务与线程   4.0ThreadX的好处 4.1响应速度更快 4.2软件维护 4.3吞吐量增">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Threadx第三章">
 <meta property="og:url" content="http://1ywd1.github.io/2021/02/07/Threadx%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AE%B2%E8%A7%A3/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Threadx简介 1.0Threadx的独特功能 1.1picokernel™架构 1.2ANSI C源代码 1.3先进的技术 1.4不是黑匣子   2.0安全认证 2.1TÜV认证 2.2符合MISRA C 2.3UL认证 2.4认证包   3.0嵌入式应用 3.1实时软件 3.2多任务 3.3任务与线程   4.0ThreadX的好处 4.1响应速度更快 4.2软件维护 4.3吞吐量增">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://1ywd1.github.io/2021/02/07/Threadx%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E4%BE%8B1.png">
+<meta property="og:image" content="http://1ywd1.github.io/2021/02/07/Threadx%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E4%BE%8B2.png">
+<meta property="og:image" content="http://1ywd1.github.io/2021/02/07/Threadx%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E4%BE%8B3.png">
 <meta property="article:published_time" content="2021-02-07T11:14:13.000Z">
-<meta property="article:modified_time" content="2021-02-07T11:47:06.472Z">
+<meta property="article:modified_time" content="2021-02-07T13:34:26.744Z">
 <meta property="article:author" content="影舞道">
 <meta property="article:tag" content="ThreadX">
 <meta property="article:tag" content="教程">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://1ywd1.github.io/2021/02/07/Threadx%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E4%BE%8B1.png">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -194,13 +200,111 @@ var _hmt = _hmt || [];
       
         <!-- toc -->
 
-
-
+<ul>
+<li><a href="#threadx%E7%AE%80%E4%BB%8B">Threadx简介</a><ul>
+<li><a href="#10threadx%E7%9A%84%E7%8B%AC%E7%89%B9%E5%8A%9F%E8%83%BD">1.0Threadx的独特功能</a><ul>
+<li><a href="#11picokerneltm%E6%9E%B6%E6%9E%84">1.1<em>picokernel™架构</em></a></li>
+<li><a href="#12ansi-c%E6%BA%90%E4%BB%A3%E7%A0%81">1.2ANSI C源代码</a></li>
+<li><a href="#13%E5%85%88%E8%BF%9B%E7%9A%84%E6%8A%80%E6%9C%AF">1.3先进的技术</a></li>
+<li><a href="#14%E4%B8%8D%E6%98%AF%E9%BB%91%E5%8C%A3%E5%AD%90">1.4不是黑匣子</a></li>
+</ul>
+</li>
+<li><a href="#20%E5%AE%89%E5%85%A8%E8%AE%A4%E8%AF%81">2.0安全认证</a><ul>
+<li><a href="#21t%C3%BCv%E8%AE%A4%E8%AF%81">2.1TÜV认证</a></li>
+<li><a href="#22%E7%AC%A6%E5%90%88misra-c">2.2符合MISRA C</a></li>
+<li><a href="#23ul%E8%AE%A4%E8%AF%81">2.3UL认证</a></li>
+<li><a href="#24%E8%AE%A4%E8%AF%81%E5%8C%85">2.4认证包</a></li>
+</ul>
+</li>
+<li><a href="#30%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BA%94%E7%94%A8">3.0嵌入式应用</a><ul>
+<li><a href="#31%E5%AE%9E%E6%97%B6%E8%BD%AF%E4%BB%B6">3.1实时软件</a></li>
+<li><a href="#32%E5%A4%9A%E4%BB%BB%E5%8A%A1">3.2多任务</a></li>
+<li><a href="#33%E4%BB%BB%E5%8A%A1%E4%B8%8E%E7%BA%BF%E7%A8%8B">3.3任务与线程</a></li>
+</ul>
+</li>
+<li><a href="#40threadx%E7%9A%84%E5%A5%BD%E5%A4%84">4.0ThreadX的好处</a><ul>
+<li><a href="#41%E5%93%8D%E5%BA%94%E9%80%9F%E5%BA%A6%E6%9B%B4%E5%BF%AB">4.1响应速度更快</a></li>
+<li><a href="#42%E8%BD%AF%E4%BB%B6%E7%BB%B4%E6%8A%A4">4.2软件维护</a></li>
+<li><a href="#43%E5%90%9E%E5%90%90%E9%87%8F%E5%A2%9E%E5%8A%A0">4.3吞吐量增加</a></li>
+<li><a href="#44%E5%A4%84%E7%90%86%E5%99%A8%E9%9A%94%E7%A6%BB">4.4处理器隔离</a></li>
+<li><a href="#45%E5%88%92%E5%88%86%E5%BA%94%E7%94%A8">4.5划分应用</a></li>
+<li><a href="#46-%E4%BE%BF%E4%BA%8E%E4%BD%BF%E7%94%A8">4.6 便于使用</a></li>
+<li><a href="#47%E7%BC%A9%E7%9F%AD%E4%B8%8A%E5%B8%82%E6%97%B6%E9%97%B4">4.7缩短上市时间</a></li>
+<li><a href="#48%E4%BF%9D%E6%8A%A4%E8%BD%AF%E4%BB%B6%E6%8A%95%E8%B5%84">4.8保护软件投资</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <!-- tocstop -->
 
 <a id="more"></a>
 
-<h1><span id></span></h1>
+<h1><span id="threadx简介">Threadx简介</span></h1><h2><span id="10threadx的独特功能">1.0Threadx的独特功能</span></h2><p>  与其他实时内核不同，ThreadX具有通用性-通过使用功能强大的CISC，RISC和DSP处理器的应用程序，可以轻松地在基于微控制器的小型应用程序中扩展。</p>
+<p>  ThreadX可基于其基础体系结构进行扩展。因为ThreadX服务是作为C库实现的，所以只有应用程序实际使用的那些服务才被带到运行时映像中。因此，ThreadX的实际大小完全由应用程序确定。对于大多数应用程序，ThreadX的指令映像大小在2 KB至15 KB之间。</p>
+<h3><span id="11picokerneltm架构">1.1<em>picokernel™架构</em></span></h3><p>  ThreadX服务没有像传统的<em>微内核</em>体系结构那样相互叠加，而是直接插入其核心。这导致最快的上下文切换和服务呼叫性能。我们称这种非分层设计为<em>picokernel</em>体系结构。</p>
+<h3><span id="12ansi-c源代码">1.2ANSI C源代码</span></h3><p>  ThreadX主要是用ANSI C编写的。需要少量的汇编语言才能将内核定制为基础目标处理器。通过这种设计，可以在很短的时间内（通常在几周内）将ThreadX移植到新的处理器系列中！</p>
+<h3><span id="13先进的技术">1.3先进的技术</span></h3><p>以下是ThreadX高级技术的重点。</p>
+<ul>
+<li>简单的picokernel架构</li>
+<li>代码大小的自动缩放（代码使用空间小）</li>
+<li>确定性处理</li>
+<li>快速的实时性能</li>
+<li>抢先式和合作式调度</li>
+<li>灵活的线程优先级支持</li>
+<li>动态系统对象创建</li>
+<li>无限数量的系统对象</li>
+<li>优化的中断处理</li>
+<li>抢占阈值</li>
+<li>优先继承</li>
+<li>事件链</li>
+<li>快速软件计时器</li>
+<li>运行时内存管理</li>
+<li>运行时性能监控</li>
+<li>运行时的堆栈分析</li>
+<li>内置系统跟踪</li>
+<li>强大的处理器支持</li>
+<li>大量的开发工具支持</li>
+<li>完全中性</li>
+</ul>
+<h3><span id="14不是黑匣子">1.4不是黑匣子</span></h3><p>  ThreadX的大多数发行版都包含完整的C源代码以及特定于处理器的汇编语言。这消除了许多商业内核中出现的“黑匣子”问题。使用ThreadX，应用程序开发人员可以确切地看到内核在做什么—毫无疑问！</p>
+<p>  源代码还允许对应用程序进行特定的修改。尽管不建议这样做，但是如果绝对需要，具有修改内核的能力当然是有益的。</p>
+<p>  对于习惯于使用自己<em>的内部内核的</em>开发人员而言，这些功能尤其令人欣慰。他们希望拥有源代码和修改内核的能力。ThreadX是此类开发人员的终极内核。</p>
+<h2><span id="20安全认证">2.0安全认证</span></h2><h3><span id="21tüv认证">2.1TÜV认证</span></h3><p>  根据IEC61508和IEC-62304，ThreadX已通过SGS-TÜVSaar认证，可用于安全关键型系统。该证书确认ThreadX可用于安全相关软件的开发，以达到国际电工委员会（IEC）61508和IEC 62304的最高安全完整性级别，用于“与电气，电子和可编程电子安全相关的功能安全”。系统。” 由德国SGSGroup和TÜVSaarland合资成立的SGS-TÜVSaar已成为领先的经认证的独立公司，致力于测试，审核，验证和认证全球安全相关系统的嵌入式软件。工业安全标准IEC 61508及其衍生的所有标准（包括IEC 62304）均用于确保电气，</p>
+<p>  根据ISO 26262标准，SGS-TÜVSaar已通过ThreadX认证，可用于安全关键型汽车系统。此外，ThreadX还通过了汽车安全完整性等级（ASIL）D认证，该等级代表了ISO 26262认证的最高水平。</p>
+<p>  此外，SGS-TÜVSaar已通过ThreadX认证，可用于安全关键型铁路应用，符合EN 50128标准，最高达到SW-SIL 4。</p>
+<p><img src="/2021/02/07/Threadx%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E4%BE%8B1.png" alt="例1"></p>
+<ul>
+<li>符合SIL 4的IEC 61508</li>
+<li>IEC 62304最高SW安全等级C</li>
+<li>ISO 26262 ASIL D</li>
+<li>EN 50128 SW-SIL 4</li>
+</ul>
+<p><img src="/2021/02/07/Threadx%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E4%BE%8B2.png" alt="例2"></p>
+<h3><span id="22符合misra-c">2.2符合MISRA C</span></h3><p>  MISRA C是使用C编程语言的关键系统的一套编程指南。最初的MISRA C指南主要针对汽车应用。但是，MISRA C现在被广泛认为适用于任何安全关键型应用。ThreadX符合MISRA-C：2004和MISRA C：2012的所有“必需”和“强制性”规则。ThreadX还符合除三个“建议”规则之外的所有规则。</p>
+<h3><span id="23ul认证">2.3UL认证</span></h3><p>  ThreadX已通过UL认证，符合UL 60730-1附件H，CSA E60730-1附件H，IEC 60730-1附件H，UL 60335-1附件R，IEC 60335-1附件R以及UL 1998的安全标准可编程组件中的软件。与IEC / UL 60730-1及其附件H中对“使用软件进行控制”的要求一起，IEC 60335-1标准在其附件R中描述了对“可编程电子电路”的要求。IEC 60730附件H和IEC 60335 -1附件R解决了在洗衣机，洗碗机，烘干机，冰箱，冷冻机和烤箱等设备中使用的MCU硬件和软件的安全性。<img src="/2021/02/07/Threadx%E7%AC%AC%E4%B8%89%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E4%BE%8B3.png" alt="例3"></p>
+<p><em>UL / IEC 60730，UL / IEC 60335，UL 1998</em></p>
+<h3><span id="24认证包">2.4认证包</span></h3><p>  ThreadX Certification Pack™是100％完整的，交钥匙的，特定于行业的独立软件包，它提供所有ThreadX证据，以证明或成功提交基于ThreadX的产品达到安全性所需的最高可靠性和关键性级别。关键的航空，医疗和工业系统。支持的认证包括DO-178B，ED-12B，DO-278，FDA510（k），IEC62304，IEC-60601，ISO-14971，UL-1998，IEC-61508，CENELEC EN50128，BS50128和49CFR236。请与Microsoft联系以获取有关证书包的更多信息。</p>
+<h2><span id="30嵌入式应用">3.0嵌入式应用</span></h2><p>  嵌入式应用程序在诸如无线通信设备，汽车引擎，激光打印机，医疗设备等产品内的微处理器上执行。嵌入式应用程序的另一个区别是它们的软件和硬件具有特定的用途。</p>
+<h3><span id="31实时软件">3.1实时软件</span></h3><p>  当对应用软件施加时间限制时，它称为<em>实时</em>软件。由于嵌入式应用程序与外部事件的固有交互作用，因此几乎总是实时的。</p>
+<h3><span id="32多任务">3.2多任务</span></h3><p>  如前所述，嵌入式应用程序具有专用的目的。为了实现此目的，软件必须执行各种<em>任务</em>。任务是执行特定职责的应用程序的半独立部分。同样，有些任务比其他任务更重要。嵌入式应用程序中的主要困难之一是在各种应用程序任务之间分配处理器。竞争任务之间的这种处理分配是ThreadX的主要目的。</p>
+<h3><span id="33任务与线程">3.3任务与线程</span></h3><p>  关于任务的另一个区别是，术语“<em>任务”</em>以多种方式使用。有时它意味着可单独加载的程序。在其他情况下，它可以引用内部程序段。因此，在当代的操作系统中，有两个术语或多或少地代替了task的使用：<em>process</em>和<em>thread</em>。甲<em>过程</em>是具有其自己的地址空间中的完全独立的程序，而一个<em>线程</em>是一个半独立的程序段，一个进程内执行。线程共享相同的进程地址空间。与线程管理相关的开销很小。</p>
+<p>  大多数嵌入式应用程序无法承受与成熟的面向过程的操作系统相关的开销（内存和性能）。另外，较小的微处理器没有支持真正的面向过程的操作系统的硬件体系结构。由于这些原因，ThreadX实现了一个线程模型，对于大多数实时嵌入式应用程序而言，该模型非常高效且实用。</p>
+<p>  为避免混淆，ThreadX不使用术语<em>task</em>。取而代之的是，使用更具描述性和现代性的名称<em>线程</em>。</p>
+<h2><span id="40threadx的好处">4.0ThreadX的好处</span></h2><p>  使用ThreadX可为嵌入式应用程序带来许多好处。当然，主要好处在于如何为嵌入式应用程序线程分配处理时间。</p>
+<h3><span id="41响应速度更快">4.1响应速度更快</span></h3><p>  在像ThreadX这样的实时内核之前，大多数嵌入式应用程序通常通过C <em>main</em>函数内部的简单控制循环来分配处理时间。这种方法仍然在非常小的或简单的应用程序中使用。但是，在大型或复杂的应用程序中，这是不切实际的，因为对任何事件的响应时间都取决于最坏情况下一次通过控制回路的处理时间的函数。</p>
+<p>  更糟糕的是，每当对控制回路进行修改时，应用程序的时序特性都会改变。这使应用程序固有地不稳定，难以维护和改进。</p>
+<p>  ThreadX提供对重要外部事件的快速确定性响应时间。ThreadX通过其可抢占的，基于优先级的调度算法来实现此目的，该算法允许较高优先级的线程抢占执行中的较低优先级的线程。结果，最坏情况的响应时间接近执行上下文切换所需的时间。这不仅是确定性的，而且还非常快。</p>
+<h3><span id="42软件维护">4.2软件维护</span></h3><p>  ThreadX内核使应用程序开发人员可以专注于其应用程序线程的特定要求，而不必担心更改应用程序其他区域的时间。此功能还使修复或增强利用ThreadX的应用程序变得更加容易。</p>
+<h3><span id="43吞吐量增加">4.3吞吐量增加</span></h3><p>  控制回路响应时间问题的一种可能的解决方法是添加更多轮询。这样可以提高响应速度，但仍不能保证恒定的最坏情况响应时间，也无济于事以增强应用程序的未来修改。同样，由于额外的轮询，处理器现在正在执行更多不必要的处理。所有这些不必要的处理都会降低系统的整体吞吐量。</p>
+<p>  关于开销的一个有趣的观点是，许多开发人员认为ThreadX之类的多线程环境会增加开销，并对总系统吞吐量产生负面影响。但是在某些情况下，多线程实际上通过消除控制循环环境中发生的所有冗余轮询而减少了开销。与多线程内核相关的开销通常是上下文切换所需时间的函数。如果上下文切换时间少于轮询过程，则ThreadX提供的解决方案可能会减少开销并提高吞吐量。这使ThreadX成为具有任何程度的复杂性或大小的应用程序的明显选择。</p>
+<h3><span id="44处理器隔离">4.4处理器隔离</span></h3><p>  ThreadX在应用程序和基础处理器之间提供了独立于处理器的强大接口。这使开发人员可以专注于应用程序，而不必花费大量时间来学习硬件细节。</p>
+<h3><span id="45划分应用">4.5划分应用</span></h3><p>  在基于控制循环的应用程序中，每个开发人员都必须对整个应用程序的运行时行为和要求有深入的了解。这是因为处理器分配逻辑分散在整个应用程序中。随着应用程序大小或复杂性的增加，所有开发人员都不可能记住整个应用程序的精确处理要求。</p>
+<p>  ThreadX使每个开发人员都摆脱了与处理器分配相关的麻烦，并允许他们专注于嵌入式应用程序的特定部分。此外，ThreadX强制将应用程序划分为明确定义的线程。就其本身而言，将应用程序划分为多个线程使开发更加简单。</p>
+<h3><span id="46-便于使用">4.6 便于使用</span></h3><p>  ThreadX在设计时就考虑了应用程序开发人员。ThreadX体系结构和服务调用接口旨在易于理解。因此，ThreadX开发人员可以快速使用其高级功能。</p>
+<h3><span id="47缩短上市时间">4.7缩短上市时间</span></h3><p>  ThreadX的所有优点都可以加速软件开发过程。ThreadX处理大多数处理器问题和最常见的安全认证，从而从开发计划中省去了这些工作。所有这些都可以缩短上市时间！</p>
+<h3><span id="48保护软件投资">4.8保护软件投资</span></h3><p>  由于其体系结构，ThreadX可以轻松移植到新的处理器和/或开发工具环境。加上ThreadX将应用程序与底层处理器的细节隔离的事实，使ThreadX应用程序具有很高的可移植性。结果，保证了应用程序的迁移路径，并保护了原始开发投资。</p>
+
       
 
        
@@ -397,7 +501,7 @@ var _hmt = _hmt || [];
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text"></span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">Threadx简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.1.</span> <span class="toc-text">1.0Threadx的独特功能</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.1.</span> <span class="toc-text">1.1picokernel™架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.2.</span> <span class="toc-text">1.2ANSI C源代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.3.</span> <span class="toc-text">1.3先进的技术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.1.4.</span> <span class="toc-text">1.4不是黑匣子</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.2.</span> <span class="toc-text">2.0安全认证</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.1.</span> <span class="toc-text">2.1TÜV认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.2.</span> <span class="toc-text">2.2符合MISRA C</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.3.</span> <span class="toc-text">2.3UL认证</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.2.4.</span> <span class="toc-text">2.4认证包</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.3.</span> <span class="toc-text">3.0嵌入式应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.1.</span> <span class="toc-text">3.1实时软件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.2.</span> <span class="toc-text">3.2多任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.3.3.</span> <span class="toc-text">3.3任务与线程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.4.</span> <span class="toc-text">4.0ThreadX的好处</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.1.</span> <span class="toc-text">4.1响应速度更快</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.2.</span> <span class="toc-text">4.2软件维护</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.3.</span> <span class="toc-text">4.3吞吐量增加</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.4.</span> <span class="toc-text">4.4处理器隔离</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.5.</span> <span class="toc-text">4.5划分应用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.6.</span> <span class="toc-text">4.6 便于使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.7.</span> <span class="toc-text">4.7缩短上市时间</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-number">1.4.8.</span> <span class="toc-text">4.8保护软件投资</span></a></li></ol></li></ol></li></ol>
                     </div>
                 </span>
             </div>
