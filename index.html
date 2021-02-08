@@ -72,7 +72,7 @@ var _hmt = _hmt || [];
 			</ul>
 		</nav>
 	    <nav>
-             总文章数 3
+             总文章数 4
         </nav>
 		<nav class="header-smart-menu">
     		
@@ -162,6 +162,131 @@ var _hmt = _hmt || [];
           </div>
           <div id="js-content" class="content-ll">
             
+  
+    <article id="post-Threadx第四章讲解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/02/08/Threadx%E7%AC%AC%E5%9B%9B%E7%AB%A0%E8%AE%B2%E8%A7%A3/">Threadx第四章</a>
+    </h1>
+  
+
+        
+         
+<a href="/2021/02/08/Threadx%E7%AC%AC%E5%9B%9B%E7%AB%A0%E8%AE%B2%E8%A7%A3/" class="archive-article-date">
+  	<time datetime="2021-02-08T04:09:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-08</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <!-- toc -->
+
+<ul>
+<li><a href="#threadx%E7%A7%BB%E6%A4%8D">Threadx移植</a><ul>
+<li><a href="#10%E5%87%86%E5%A4%87%E8%B5%84%E6%BA%90%E6%96%87%E4%BB%B6">1.0准备资源文件</a></li>
+<li><a href="#11%E6%B7%BB%E5%8A%A0threadx%E5%88%B0%E5%B7%A5%E7%A8%8B%E4%B8%AD">1.1添加ThreadX到工程中</a></li>
+<li><a href="#12%E4%BF%AE%E6%94%B9tx_initialize_low_levels%E6%96%87%E4%BB%B6">1.2修改tx_initialize_low_level.s文件</a></li>
+<li><a href="#13%E4%BF%AE%E6%94%B9stm32f4xx_itc%E6%96%87%E4%BB%B6">1.3修改stm32f4xx_it.c文件</a></li>
+<li><a href="#14%E4%BF%AE%E6%94%B9sysc%E6%96%87%E4%BB%B6">1.4修改sys.c文件</a></li>
+<li><a href="#15%E9%87%8D%E6%9E%84delaycdelayh%E6%96%87%E4%BB%B6">1.5重构delay.c/delay.h文件</a></li>
+<li><a href="#16%E5%88%A0%E9%99%A4usartcusarth%E6%96%87%E4%BB%B6">1.6删除usart.c/usart.h文件</a></li>
+<li><a href="#17%E6%B7%BB%E5%8A%A0tx_user%E6%96%87%E4%BB%B6">1.7添加TX_USER文件</a></li>
+<li><a href="#18%E6%B7%BB%E5%8A%A0%E5%AE%8F%E5%AE%9A%E4%B9%89">1.8添加宏定义</a></li>
+<li><a href="#19%E7%BC%96%E5%86%99%E4%B8%BB%E5%87%BD%E6%95%B0">1.9编写主函数</a></li>
+<li><a href="#%E9%99%84%E5%BD%95%E7%BC%96%E8%AF%91%E9%94%99%E8%AF%AF%E7%9A%84%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95">附录：编译错误的解决办法</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+        
+          <a class="article-more-a" href="/2021/02/08/Threadx%E7%AC%AC%E5%9B%9B%E7%AB%A0%E8%AE%B2%E8%A7%A3/#more">more >></a>
+        
+      
+
+   <!- 百度自动推送方式提交 -->
+
+  <script>
+  (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      if (curProtocol === 'https') {
+          bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+      }
+      else {
+          bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+      }
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+  })();
+  </script>
+
+<!- 百度自动推送方式提交结束 -->
+	<!-- 增加版权声明 -->
+
+
+
+  <div class="declare" hidden="hidden"></div>
+
+
+<!-- 增加版权声明结束 -->
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">ThreadX</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">教程</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/02/08/Threadx%E7%AC%AC%E5%9B%9B%E7%AB%A0%E8%AE%B2%E8%A7%A3/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
   
     <article id="post-Threadx第三章讲解" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
