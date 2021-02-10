@@ -19,7 +19,7 @@
 <meta property="og:image" content="http://1ywd1.github.io/2021/02/08/Threadx%E7%AC%AC%E4%BA%94%E7%AB%A0%E8%AE%B2%E8%A7%A3/例1.png">
 <meta property="og:image" content="http://1ywd1.github.io/2021/02/08/Threadx%E7%AC%AC%E4%BA%94%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E4%B8%AD%E6%96%AD.png">
 <meta property="article:published_time" content="2021-02-08T08:35:41.000Z">
-<meta property="article:modified_time" content="2021-02-10T10:20:05.314Z">
+<meta property="article:modified_time" content="2021-02-10T10:28:13.934Z">
 <meta property="article:author" content="影舞道">
 <meta property="article:tag" content="ThreadX">
 <meta property="article:tag" content="教程">
@@ -225,7 +225,7 @@ var _hmt = _hmt || [];
 <p>  那对于这一部分是关于介绍基本知识的，所以我们先回到这一章的主题。</p>
 <h2><span id="12线程的状态">1.2线程的状态</span></h2><p>  对于线程的状态我分为以下：</p>
 <ol>
-<li>就绪状态：是线程排着队要运行的一种状态。线准备执行的时候，线程处于就绪状态。就绪的线程如果处于就绪状态的最高优先级的时候，才会执行，然后线程将其状态更改为执行转状态。</li>
+<li>就绪状态：是线程排着队要运行的一种状态。线准备执行的时候，线程处于就绪状态。就绪的线程如果处于就绪状态的最高优先级的时候，才会执行，然后线程将其状态更改为执行状态。</li>
 <li>挂起状态：线程因为特定原因不能执行，而是等待着这个原因满足或者消除的时候才可以从挂起状态到就绪状态，而且在就绪状态等待的时候要处于最高优先级的时候才能执行。</li>
 <li>执行状态：该线程是彻彻底底的运行，在任何给定的时刻，只有一个线程处于执行状态。这也是因为处于执行状态的线程可以彻底的控制底层处理器。</li>
 <li>中止状态：是用户让指定的线程直接让其泯灭的一种形式【ps:我感觉泯灭的这个词修饰是最恰当的】，被终止的线程无法再次执行，也没有挂起的资格，也就是说该线程直接消失。</li>
@@ -297,7 +297,8 @@ var _hmt = _hmt || [];
 <li>B A B</li>
 <li>A B</li>
 </ol>
-<p>首先ThreadX中的优先级比较像是单片机中的抢占优先级。所以，在就绪列表中的线程，抢占优先级最高的先执行，在执行完毕之后会因为tx_thread_sleep而进行挂起，所以刚开始的是C先执行，执行完毕会因为tx_thread_sleep而挂起，现在挂起列表中有C、就绪列表中A B，现在就绪列表的A优先级最高所以现在A在执行</p>
+<p>首先ThreadX中的优先级比较像是单片机中的抢占优先级。所以，在就绪列表中的线程，抢占优先级最高的先执行，在执行完毕之后会因为tx_thread_sleep而进行挂起，所以刚开始的是C先执行，执行完毕会因为tx_thread_sleep而挂起，现在挂起列表中有C、就绪列表中A B，现在就绪列表的A优先级最高所以现在A执行、执行完毕之后也会因为tx_thread_sleep而进行挂起，然后现在挂起列表中有A C，就绪列表中只有B所以现在B在执行，执行完毕之后由于tx_thread_sleep而挂起，现在挂起列表中有B C A而就绪列表中是没有的。所以第一个答案是C B A。即C优先级最高。</p>
+<p>至于第二个和第三个我不做解释。大家可以根据第一个自行解答。</p>
 
       
 
