@@ -20,7 +20,7 @@
 <meta property="og:image" content="http://1ywd1.github.io/2021/02/08/Threadx%E7%AC%AC%E4%BA%94%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E4%B8%AD%E6%96%AD.png">
 <meta property="og:image" content="http://1ywd1.github.io/2021/02/08/Threadx%E7%AC%AC%E4%BA%94%E7%AB%A0%E8%AE%B2%E8%A7%A3/习题讲解.jpg">
 <meta property="article:published_time" content="2021-02-08T08:35:41.000Z">
-<meta property="article:modified_time" content="2021-02-14T08:07:53.688Z">
+<meta property="article:modified_time" content="2021-02-14T08:38:04.709Z">
 <meta property="article:author" content="影舞道">
 <meta property="article:tag" content="ThreadX">
 <meta property="article:tag" content="教程">
@@ -385,7 +385,7 @@ var _hmt = _hmt || [];
 <h2><span id="14-调度算法-时间片轮调度">1.4 调度算法-时间片轮调度</span></h2><p>上述的抢占也是调度算法的一种，是常用的调度算法，即线程调度，threadX对它解释是：</p>
 <p>  ThreadX根据线程的优先级调度线程。具有最高优先级的就绪线程将首先执行。如果相同优先级的多个线程准备好时，它们在执行<em>先入先出</em>（FIFO）的方式。</p>
 <p>  其次就是同等优先级调度算法，即循环调度，threadX对它解释是：</p>
-<p>  ThreadX支持具有相同优先级的多个线程<em>的循环</em>调度。这是通过对*<strong>tx_thread_relinquish的**<em>协作调用来</em></strong>完成的*<strong>。该服务为所有其他具有相同优先级的就绪线程提供了在**<em>tx_thread_relinquish</em></strong>调用程序再次执行之前执行的机会。</p>
+<p>  ThreadX支持具有相同优先级的多个线程<em>的循环</em>调度。这是通过对<strong>tx_thread_relinquish</strong>的协作调用来完成的。该服务为所有其他具有相同优先级的就绪线程提供了在<strong>tx_thread_relinquish</strong>调用程序再次执行之前执行的机会。</p>
 <p>  对于这个循环调度算法，最常用的时间片轮调度算法，threadX对它的解释是：</p>
 <p>  <em>时间分片</em>是循环调度的另一种形式。时间片指定线程在不放弃处理器的情况下可以执行的最大计时器滴答（计时器中断）数。在ThreadX中，可以在每个线程的基础上进行时间分片。线程的时间片在创建期间分配，并且可以在运行时进行修改。当时间片到期时，相同优先级的所有其他就绪线程将有机会在时间片线程再次执行之前执行。</p>
 <p>在线程挂起，放弃，进行导致抢占的ThreadX服务调用或本身经过时间分片后，会为其分配新的线程时间分片。</p>
@@ -393,8 +393,8 @@ var _hmt = _hmt || [];
 <p>我在这里进行讲解</p>
 <ul>
 <li>抢占：针对于不同优先级的一种调度算法，其优先级的分配是用户做的，但是优先级分配的过程中用户既要关注与程序运行的时间，还要关注于程序的重要性。通常对应这种原则：运行时间越大，优先级越小。程序越重要，优先级越大。</li>
-<li>循环调度：针对于同一优先级不同线程的一种调度算法，其主要的是什么时候放弃执行线程，对于这一种情况用户通过*<strong>tx_thread_relinquish**<em>函数可以让执行先放弃这个线程。即原本正在执行A线程但是线程B正在A的后面排队等候A执行完毕B才能执行，等待B执行完毕之后A在执行，至于A线程和B线程什么时候执行完毕呢？那就是只要到</em></strong>tx_thread_relinquish***函数及判断该线程执行完毕。</li>
-<li>时间片轮调度：即设计一个时间片，在这个时间片内这个线程完毕的时候同优先级的其他线程就不会执行，而到了这个时间片而这个线程还未运行完毕，则这个线程就挂起，放入循环调度的末尾等待下一次的执行机会，这就是时间片轮调度，属于循环调度一种，但是放弃执行和执行是Threadx进行内部进行操作的就不需要用户调用**<em>tx_thread_relinquish**</em>来判断是否放弃执行本线程。</li>
+<li>循环调度：针对于同一优先级不同线程的一种调度算法，其主要的是什么时候放弃执行线程，对于这一种情况用户通过<strong>tx_thread_relinquish</strong>函数可以让执行先放弃这个线程。即原本正在执行A线程但是线程B正在A的后面排队等候A执行完毕B才能执行，等待B执行完毕之后A在执行，至于A线程和B线程什么时候执行完毕呢？那就是只要到<strong>tx_thread_relinquish</strong>函数及判断该线程执行完毕。</li>
+<li>时间片轮调度：即设计一个时间片，在这个时间片内这个线程完毕的时候同优先级的其他线程就不会执行，而到了这个时间片而这个线程还未运行完毕，则这个线程就挂起，放入循环调度的末尾等待下一次的执行机会，这就是时间片轮调度，属于循环调度一种，但是放弃执行和执行是Threadx进行内部进行操作的就不需要用户调用<strong>tx_thread_relinquish</strong>来判断是否放弃执行本线程。</li>
 </ul>
 <p>到这里我们的课程就讲解完毕了。</p>
 
