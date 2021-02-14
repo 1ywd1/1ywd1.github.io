@@ -9,17 +9,18 @@
   <link rel="dns-prefetch" href="http://1ywd1.github.io">
   <title>Threadx第五章 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="1.基于Threadx的基础知识讲解 1.1线程讲解 1.2线程的状态 1.3线程的抢占">
+  <meta name="description" content="1.基于Threadx的基础知识讲解 1.1线程讲解 1.2线程的状态 1.3线程的抢占 1.4 调度算法-时间片轮调度">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Threadx第五章">
 <meta property="og:url" content="http://1ywd1.github.io/2021/02/08/Threadx%E7%AC%AC%E4%BA%94%E7%AB%A0%E8%AE%B2%E8%A7%A3/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="1.基于Threadx的基础知识讲解 1.1线程讲解 1.2线程的状态 1.3线程的抢占">
+<meta property="og:description" content="1.基于Threadx的基础知识讲解 1.1线程讲解 1.2线程的状态 1.3线程的抢占 1.4 调度算法-时间片轮调度">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://1ywd1.github.io/2021/02/08/Threadx%E7%AC%AC%E4%BA%94%E7%AB%A0%E8%AE%B2%E8%A7%A3/例1.png">
 <meta property="og:image" content="http://1ywd1.github.io/2021/02/08/Threadx%E7%AC%AC%E4%BA%94%E7%AB%A0%E8%AE%B2%E8%A7%A3/%E4%B8%AD%E6%96%AD.png">
+<meta property="og:image" content="http://1ywd1.github.io/2021/02/08/Threadx%E7%AC%AC%E4%BA%94%E7%AB%A0%E8%AE%B2%E8%A7%A3/习题讲解.jpg">
 <meta property="article:published_time" content="2021-02-08T08:35:41.000Z">
-<meta property="article:modified_time" content="2021-02-10T10:28:13.934Z">
+<meta property="article:modified_time" content="2021-02-14T08:07:53.688Z">
 <meta property="article:author" content="影舞道">
 <meta property="article:tag" content="ThreadX">
 <meta property="article:tag" content="教程">
@@ -204,6 +205,7 @@ var _hmt = _hmt || [];
 <li><a href="#11%E7%BA%BF%E7%A8%8B%E8%AE%B2%E8%A7%A3">1.1线程讲解</a></li>
 <li><a href="#12%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%8A%B6%E6%80%81">1.2线程的状态</a></li>
 <li><a href="#13%E7%BA%BF%E7%A8%8B%E7%9A%84%E6%8A%A2%E5%8D%A0">1.3线程的抢占</a></li>
+<li><a href="#14-%E8%B0%83%E5%BA%A6%E7%AE%97%E6%B3%95-%E6%97%B6%E9%97%B4%E7%89%87%E8%BD%AE%E8%B0%83%E5%BA%A6">1.4 调度算法-时间片轮调度</a></li>
 </ul>
 </li>
 </ul>
@@ -299,6 +301,102 @@ var _hmt = _hmt || [];
 </ol>
 <p>首先ThreadX中的优先级比较像是单片机中的抢占优先级。所以，在就绪列表中的线程，抢占优先级最高的先执行，在执行完毕之后会因为tx_thread_sleep而进行挂起，所以刚开始的是C先执行，执行完毕会因为tx_thread_sleep而挂起，现在挂起列表中有C、就绪列表中A B，现在就绪列表的A优先级最高所以现在A执行、执行完毕之后也会因为tx_thread_sleep而进行挂起，然后现在挂起列表中有A C，就绪列表中只有B所以现在B在执行，执行完毕之后由于tx_thread_sleep而挂起，现在挂起列表中有B C A而就绪列表中是没有的。所以第一个答案是C B A。即C优先级最高。</p>
 <p>至于第二个和第三个我不做解释。大家可以根据第一个自行解答。</p>
+<p>对于线程来说每时每刻都在有线程的挂起和解挂，至于为什么线程不是像中断服务函数一样执行完就完毕了，为什么还要涉及到挂起和解挂呢？大家请看这两个的区别：</p>
+<p>这是中断服务函数的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定时器3中断服务函数</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TIM3_IRQHandler</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span>(TIM_GetITStatus(TIM3,TIM_IT_Update)==SET) <span class="comment">//溢出中断</span></span><br><span class="line">	&#123;</span><br><span class="line">		LED1=!LED1;<span class="comment">//DS1翻转</span></span><br><span class="line">	&#125;</span><br><span class="line">	TIM_ClearITPendingBit(TIM3,TIM_IT_Update);  <span class="comment">//清除中断标志位</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>这是线程函数的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TASK_INTER_Usart_Inter_APP</span><span class="params">(ULONG thread_input)</span>                          </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"> <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line"> &#123;</span><br><span class="line">	 printf_1(<span class="string">&quot;&gt;&gt;交互任务-串口交互-运行中.....\r\n&quot;</span>);</span><br><span class="line">	 tx_thread_sleep(<span class="number">1000</span>);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>大家可以对比一下有什么区别。</p>
+<p>  其实最大的区别是线程函数中存在死循环【没有死循环，则函数会运行完毕，运行完毕的线程会处于完成状态】不会将线程函数全部执行完毕，而中断服务函数没有死循环，一下子就会执行完毕从该函数里退出。所以中断服务函数不会存在自身的挂起和解挂。但线程可不一样，线程不是以下子就执行完毕的而是在挂起-&gt;解挂-&gt;就绪列表中等待-&gt;执行-&gt;在挂起中循环。这样子是不是感觉线程更像主函数呀？</p>
+<p>  但这是单个线程，如果有两个、三个、甚至多个呢？而且每个线程重要程度不一样，这就导致了线程和线程之间可以相互抢占，他们的至高规则是高优先级的线程可以抢占低优先级的线程。即当低优先级线程执行的过程中，高优先级的线程直接中断低优先级的线程【低优先级线程没有执行完毕！！！！】。此时低优先级的线程是处于就绪状态，而高优先级的线程处于执行状态，只有当高优先级执行完毕，低优先级才能在断掉的地方执行。</p>
+<p>  大家可以想象一个场景，这里共有A、B、C，D四个线程优先级A&gt;B&gt;C&gt;D，此刻A线程是正常的带有tx_thread_sleep运行，也就是自动挂起的那种。B线程是没有死循环的那种，也就是说程序能直接退出函数。C线程出现了很大的问题，就是C线程是光有死循环但没有tx_thread_sleep，也就是C线程永远不会挂起。D线程就是跟A线程一样完全正常的。</p>
+<ul>
+<li><p>  好此刻A线程处于最高优先级，并且A是正常的所以A肯定会执行的。</p>
+</li>
+<li><p>之后是B，但是B没有死循环所有B执行完一遍就直接退出函数了，状态就是完成状态。</p>
+</li>
+<li><p>对于奇葩的线程C，他有死循环，但是死循环中没有tx_thread_sleep延时函数，也就是说，这个线程C他永远不会挂起。但是C执行吗？虽然C没有延时函数来让他挂起，但他是会执行的。</p>
+</li>
+<li><p>至于最后一个D，他虽然是和A一样正常的。但是他不会运行的，原因是C线程不正常，C不会挂起，C永远处于就绪列表中对吧，但是D优先级很低，比C还低，C一直都会运行，就会一直压着D让其不会运行。所以D是不会允许的。</p>
+<p>但是为什么C不正常会压着D而不会对A有任何干扰呢？原因是抢占。对C会一直执行，但是只要我A来了，你的C无论干什么都点给我让路。这就是A能正常执行的原因。</p>
+<p>在上面的例子中，大家是不是对线程的抢占有些了解呢？但我这里有一道题，比较让人恶心，那让我和你一起分析以下。</p>
+<p>例：现有三个线程A、B、C。代码如下，优先级A&gt;B</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">A</span> <span class="params">(<span class="keyword">void</span>)</span>   <span class="comment">//线程A</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    &#123;系统执行代码<span class="number">20</span>ms&#125;  <span class="comment">//即要执行完这个代码需要20ms</span></span><br><span class="line">    tx_thread_sleep(<span class="number">1000</span>); <span class="comment">//挂起1000ms</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">B</span> <span class="params">(<span class="keyword">void</span>)</span>     <span class="comment">//线程B</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    &#123;系统执行代码<span class="number">2</span>ms&#125;  <span class="comment">//即要执行完这个代码需要2ms</span></span><br><span class="line">    tx_thread_sleep(<span class="number">500</span>); <span class="comment">//挂起500ms</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>求A、B线程的while执行一次是多少时间。</p>
+<p>在这三个问题中要注意：线程和线程之间存在抢占关系！！！</p>
+<p>对于这道题，A线程是最高优先级，享受到优先执行和优先运行即，A线程的运行时序是任何线程都无法打断的，这就保证了线程A运行时序的绝对准确。但是由于这种优先级的顺序，这就导致了B线程的时序不稳，大家看这道题，A、B线程挂起时间不是对称的，这就产生了一个问题，在有些时候，A线程不会打断B线程执行，而有些时候本该B线程运行却因为A线程在运行导致的B线程直接往后推迟运行，这样子线程B的时序即循环里面的时间不是我们想要的。</p>
+<p>  附：例题解析图【ps:感谢509实验室兰云龙的帮助】：</p>
+<img src="/2021/02/08/Threadx%E7%AC%AC%E4%BA%94%E7%AB%A0%E8%AE%B2%E8%A7%A3/习题讲解.jpg" alt="习题讲解" style="zoom:80%;">
+
+<p>第一次整体调度：</p>
+<table>
+<thead>
+<tr>
+<th>线程</th>
+<th>线程while里运行理想时间</th>
+<th>线程while里运行实际时间</th>
+<th>是否准确</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A</td>
+<td>1020ms</td>
+<td>1020ms</td>
+<td>是</td>
+</tr>
+<tr>
+<td>B</td>
+<td>502ms</td>
+<td>502ms</td>
+<td>是</td>
+</tr>
+</tbody></table>
+<p>第二次整体调度：</p>
+<table>
+<thead>
+<tr>
+<th>线程</th>
+<th>线程while里运行理想时间</th>
+<th>线程while里运行实际时间</th>
+<th>是否准确</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A</td>
+<td>1020ms</td>
+<td>1020ms</td>
+<td>是</td>
+</tr>
+<tr>
+<td>B</td>
+<td>502ms</td>
+<td>518ms</td>
+<td>否</td>
+</tr>
+</tbody></table>
+<p>大家进行一下分析，线程A的时序随着时间推移是一直保持1020ms的，也就是一直是稳定的</p>
+<p>但是到B线程呢？B大家可以根据数据来判断。B系统时序是不稳的。那导致B时序不稳的原因是什么？其实是具有大运行效用的线程A抢占B导致线程B的运行时间需要有部分A的时序来参与。</p>
+<p>大家可能说了，我写的程序没有如果大的延时效应。但是是真的如此吗？</p>
+<p>对于单片机中有一个大延时效应的外设，即串口发送。如果以下子发送和很多字节那就是大延时效应，即打印一串字符可能需要20ms左右。但是，经过我的分析，对串口其中一部分的时间是被用于等待和舍弃掉的所有在之后的文章中我会分析处理的方法</p>
+<p>到这里，线程的抢占也就讲完了。如果有不懂得话可以通过qq私聊我，我在给进行讲解。</p>
+<h2><span id="14-调度算法-时间片轮调度">1.4 调度算法-时间片轮调度</span></h2><p>上述的抢占也是调度算法的一种，是常用的调度算法，即线程调度，threadX对它解释是：</p>
+<p>  ThreadX根据线程的优先级调度线程。具有最高优先级的就绪线程将首先执行。如果相同优先级的多个线程准备好时，它们在执行<em>先入先出</em>（FIFO）的方式。</p>
+<p>  其次就是同等优先级调度算法，即循环调度，threadX对它解释是：</p>
+<p>  ThreadX支持具有相同优先级的多个线程<em>的循环</em>调度。这是通过对*<strong>tx_thread_relinquish的**<em>协作调用来</em></strong>完成的*<strong>。该服务为所有其他具有相同优先级的就绪线程提供了在**<em>tx_thread_relinquish</em></strong>调用程序再次执行之前执行的机会。</p>
+<p>  对于这个循环调度算法，最常用的时间片轮调度算法，threadX对它的解释是：</p>
+<p>  <em>时间分片</em>是循环调度的另一种形式。时间片指定线程在不放弃处理器的情况下可以执行的最大计时器滴答（计时器中断）数。在ThreadX中，可以在每个线程的基础上进行时间分片。线程的时间片在创建期间分配，并且可以在运行时进行修改。当时间片到期时，相同优先级的所有其他就绪线程将有机会在时间片线程再次执行之前执行。</p>
+<p>在线程挂起，放弃，进行导致抢占的ThreadX服务调用或本身经过时间分片后，会为其分配新的线程时间分片。</p>
+<p>如果抢占了时间片线程，它将在剩余时间片之前在其他优先级相同的就绪线程之前恢复。</p>
+<p>我在这里进行讲解</p>
+<ul>
+<li>抢占：针对于不同优先级的一种调度算法，其优先级的分配是用户做的，但是优先级分配的过程中用户既要关注与程序运行的时间，还要关注于程序的重要性。通常对应这种原则：运行时间越大，优先级越小。程序越重要，优先级越大。</li>
+<li>循环调度：针对于同一优先级不同线程的一种调度算法，其主要的是什么时候放弃执行线程，对于这一种情况用户通过*<strong>tx_thread_relinquish**<em>函数可以让执行先放弃这个线程。即原本正在执行A线程但是线程B正在A的后面排队等候A执行完毕B才能执行，等待B执行完毕之后A在执行，至于A线程和B线程什么时候执行完毕呢？那就是只要到</em></strong>tx_thread_relinquish***函数及判断该线程执行完毕。</li>
+<li>时间片轮调度：即设计一个时间片，在这个时间片内这个线程完毕的时候同优先级的其他线程就不会执行，而到了这个时间片而这个线程还未运行完毕，则这个线程就挂起，放入循环调度的末尾等待下一次的执行机会，这就是时间片轮调度，属于循环调度一种，但是放弃执行和执行是Threadx进行内部进行操作的就不需要用户调用**<em>tx_thread_relinquish**</em>来判断是否放弃执行本线程。</li>
+</ul>
+<p>到这里我们的课程就讲解完毕了。</p>
 
       
 
@@ -496,7 +594,7 @@ var _hmt = _hmt || [];
                 </span>
                 <span class="tooltip-content">
                     <div class="toc-article">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">1.基于Threadx的基础知识讲解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.1.</span> <span class="toc-text">1.1线程讲解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.2.</span> <span class="toc-text">1.2线程的状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.3.</span> <span class="toc-text">1.3线程的抢占</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link"><span class="toc-number">1.</span> <span class="toc-text">1.基于Threadx的基础知识讲解</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.1.</span> <span class="toc-text">1.1线程讲解</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.2.</span> <span class="toc-text">1.2线程的状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.3.</span> <span class="toc-text">1.3线程的抢占</span></a></li><li class="toc-item toc-level-2"><a class="toc-link"><span class="toc-number">1.4.</span> <span class="toc-text">1.4 调度算法-时间片轮调度</span></a></li></ol></li></ol>
                     </div>
                 </span>
             </div>
